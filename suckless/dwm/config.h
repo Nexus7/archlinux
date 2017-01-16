@@ -50,6 +50,10 @@ static const Layout layouts[] = {
 #define XF86AudioMute						0x1008ff12
 #define XF86AudioLowerVolume		0x1008ff11
 #define XF86AudioRaiseVolume		0x1008ff13
+#define XF86Display							0x1008ff59
+#define XF86Search							0x1008ff1b
+#define XF86LaunchA							0x1008ff40
+#define XF86AudioMicMute				0x1008ffb2
 #define MODKEY Mod1Mask
 #define TAGKEYS(KEY,TAG) \
 	{ MODKEY,                       KEY,      view,           {.ui = 1 << TAG} }, \
@@ -66,9 +70,13 @@ static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont,
 static const char *termcmd[]  = { "st", "-e", "tmux", NULL };
 static const char *cmdbrightnessup[]  = { "xbacklight", "-inc", "10", NULL };
 static const char *cmdbrightnessdown[]  = { "xbacklight", "-dec", "10", NULL };
-static const char *cmdsoundup[]  = { "amixer", "-q", "sset", "Master", "5%+", NULL };
-static const char *cmdsounddown[]  = { "amixer", "-q", "sset", "Master", "5%-", NULL };
-static const char *cmdsoundtoggle[]  = { "amixer", "-q", "sset", "Master", "toggle", NULL };
+static const char *cmdsoundup[]  = { "pamixer", "--increase", "5", NULL };
+static const char *cmdsounddown[]  = { "pamixer", "--decrease", "5", NULL };
+static const char *cmdsoundtoggle[]  = { "pamixer", "-t", NULL };
+static const char *cmdmictoggle[]  = { "pactl", "set-source-mute", "1", "toggle", NULL };
+static const char *cmddisplay[] = { "arandr", NULL };
+static const char *cmdchrome[] = { "google-chrome-stable", NULL };
+
 
 static Key keys[] = {
 	/* modifier                     key        function        argument */
@@ -78,8 +86,12 @@ static Key keys[] = {
 	{ 0,            XF86MonBrightnessDown,     spawn,          {.v = cmdbrightnessdown } },
 	{ 0,            XF86MonBrightnessUp,       spawn,          {.v = cmdbrightnessup } },
 	{ 0,            XF86AudioMute,			   		 spawn,          {.v = cmdsoundtoggle } },
+	{ 0,            XF86AudioMicMute,		   		 spawn,          {.v = cmdmictoggle } },
 	{ 0,            XF86AudioRaiseVolume,      spawn,          {.v = cmdsoundup } },
 	{ 0,            XF86AudioLowerVolume,      spawn,          {.v = cmdsounddown } },	
+	{ 0,            XF86Display,      				 spawn,          {.v = cmddisplay } },	
+	{ 0,            XF86Search,								 spawn,          {.v = dmenucmd } },	
+	{ 0,            XF86LaunchA,      				 spawn,          {.v = cmdchrome } },	
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
 	{ MODKEY,                       XK_i,      incnmaster,     {.i = +1 } },
